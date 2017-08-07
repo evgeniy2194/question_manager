@@ -32,9 +32,7 @@ class CreateForm extends React.Component {
 
         const crop = {
             width: 300,
-            height: 300,
-            x: 50,
-            y: 50
+            aspect: 16 / 9
         };
 
         return (

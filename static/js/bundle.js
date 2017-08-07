@@ -22636,9 +22636,7 @@ var CreateForm = function (_React$Component) {
 
             var crop = {
                 width: 300,
-                height: 300,
-                x: 50,
-                y: 50
+                aspect: 16 / 9
             };
 
             return _react2.default.createElement(
