@@ -1,0 +1,31 @@
+{
+  "name": "question_manager",
+  "version": "0.0.1",
+  "description": "Interface for managing questions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evgeniy2194/question_manager.git"
+  },
+  "author": "Evgeniy2194",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/evgeniy2194/question_manager/issues"
+  },
+  "homepage": "https://github.com/evgeniy2194/question_manager#readme",
+  "dependencies": {
+    "angular": "^1.5.11",
+    "angular-resource": "^1.5.11",
+    "bootstrap": "^3.3.7",
+    "express": "^4.15.4",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-uglify": "^3.0.0",
+    "moment": "^2.18.1",
+    "sequelize": "^4.4.2",
+    "ui-select": "^0.19.8"
+  }
+}
