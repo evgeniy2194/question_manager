@@ -1,7 +1,7 @@
-import Sequelize from 'sequelize';
-import connect from '../connect';
+const Sequelize = require('sequelize');
+const connect = require('../connect');
 
-const Question = connect.define('Question', {
+module.exports = connect.define('Question', {
     id: {
         type: Sequelize.INTEGER.UNSIGNED,
         primaryKey: true,
@@ -17,5 +17,3 @@ const Question = connect.define('Question', {
 }, {
     timestamps: false
 });
-
-export default Question;

@@ -1,9 +1,13 @@
-import Question from './question';
-import QuestionAnswer from './questionAnswer';
-import QuestionImage from './questionImage';
+const Question = require('./question');
+const QuestionAnswer = require('./questionAnswer');
+const QuestionImage = require('./questionImage');
 
 Question.hasMany(QuestionAnswer, {as: 'answers'});
 Question.hasOne(QuestionImage, {as: 'image'});
-QuestionAnswer.belongsTo(Question, {as: 'question'});
+// QuestionAnswer.belongsTo(Question, {as: 'question'});
 
-export {Question, QuestionAnswer, QuestionImage};
+module.exports = {
+    Question: Question,
+    QuestionAnswer: QuestionAnswer,
+    QuestionImage: QuestionImage
+};

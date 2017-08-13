@@ -1,6 +1,6 @@
-import Sequelize from 'sequelize';
+const Sequelize = require('sequelize');
 
-const connect = new Sequelize('question', 'root', 'aq1sw2de3', {
+const connect = new Sequelize('questions', 'root', 'aq1sw2de3', {
     host: 'localhost',
     dialect: 'mysql',
     pool: {
@@ -19,4 +19,4 @@ connect.authenticate().then(() => {
     console.error('Unable to connect to the database:', err);
 });
 
-export default connect;
+module.exports = connect;

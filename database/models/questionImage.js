@@ -1,7 +1,7 @@
-import Sequelize from 'sequelize';
-import connect from '../connect';
+const Sequelize = require('sequelize');
+const connect = require('../connect');
 
-const QuestionImage = connect.define('QuestionImage', {
+module.exports = connect.define('QuestionImage', {
     id: {
         type: Sequelize.INTEGER.UNSIGNED,
         primaryKey: true,
@@ -22,5 +22,3 @@ const QuestionImage = connect.define('QuestionImage', {
 }, {
     timestamps: false
 });
-
-export default QuestionImage;

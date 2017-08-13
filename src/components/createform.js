@@ -25,6 +25,11 @@ class CreateForm extends React.Component {
         const data = new FormData();
 
         data.append('question', this.state.question);
+        data.append('cotegory', this.state.cotegory);
+        data.append('answer1', this.state.answer1);
+        data.append('answer2', this.state.answer2);
+        data.append('answer3', this.state.answer3);
+        data.append('answer4', this.state.answer4);
         data.append('file', this.state.file);
         data.append('cropX', this.state.pixelCrop.x);
         data.append('cropY', this.state.pixelCrop.y);
@@ -33,7 +38,6 @@ class CreateForm extends React.Component {
 
         fetch('/questions/add', {
             method: 'POST',
-            //headers: {"Content-type": "multipart/form-data"},
             body: data
         });
         console.log(this.state);
@@ -136,7 +140,8 @@ class CreateForm extends React.Component {
                         <div className="form-group row">
                             <label className="col-sm-3 col-form-label">Изображение:</label>
                             <div className="col-sm-9">
-                                <input className="form-control form-control-sm" type="file" onChange={this.onInputFileChange.bind(this)}
+                                <input className="form-control form-control-sm" type="file"
+                                       onChange={this.onInputFileChange.bind(this)}
                                        value={this.state.originalImage}/>
                             </div>
                         </div>
@@ -148,7 +153,7 @@ class CreateForm extends React.Component {
 
                         <div className="form-group row">
                             <button className="btn btn-sm btn-default ml-auto"
-                                onClick={this.submit.bind(this)}>Добавить
+                                    onClick={this.submit.bind(this)}>Добавить
                             </button>
                         </div>
                     </form>
