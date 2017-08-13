@@ -6,25 +6,47 @@ const questionAnswers = 'QuestionAnswers';
 
 module.exports = {
     up: (queryInterface, Sequelize) => {
-        return queryInterface.createTable(questions, {
+        return queryInterface.createTable(questionImages, {
             id: {
                 type: Sequelize.INTEGER.UNSIGNED,
                 primaryKey: true,
                 autoIncrement: true
             },
-            question: {
+            origin: {
                 type: Sequelize.STRING,
-                allowNull: false,
+                allowNull: false
             },
-            imageId: {
-                type: Sequelize.INTEGER.UNSIGNED,
-                references: {
-                    model: questionImages,
-                    key: 'id'
-                },
-            }
+            thumb: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
+            x: Sequelize.INTEGER,
+            y: Sequelize.INTEGER,
+            width: Sequelize.INTEGER,
+            height: Sequelize.INTEGER
         }, {
             charset: 'UTF8',
+        }).then(() => {
+            return queryInterface.createTable(questions, {
+                id: {
+                    type: Sequelize.INTEGER.UNSIGNED,
+                    primaryKey: true,
+                    autoIncrement: true
+                },
+                question: {
+                    type: Sequelize.STRING,
+                    allowNull: false,
+                },
+                imageId: {
+                    type: Sequelize.INTEGER.UNSIGNED,
+                    references: {
+                        model: questionImages,
+                        key: 'id'
+                    },
+                }
+            }, {
+                charset: 'UTF8',
+            });
         }).then(() => {
             return queryInterface.createTable(questionAnswers, {
                 id: {
@@ -52,32 +74,9 @@ module.exports = {
                 charset: 'UTF8',
             });
         }).then(() => {
-            return queryInterface.createTable(questionImages, {
-                id: {
-                    type: Sequelize.INTEGER.UNSIGNED,
-                    primaryKey: true,
-                    autoIncrement: true
-                },
-                origin: {
-                    type: Sequelize.STRING,
-                    allowNull: false
-                },
-                thumb: {
-                    type: Sequelize.STRING,
-                    allowNull: false
-                },
-                x: Sequelize.INTEGER,
-                y: Sequelize.INTEGER,
-                width: Sequelize.INTEGER,
-                height: Sequelize.INTEGER
-            }, {
-                charset: 'UTF8',
-            });
-        }).then(() => {
             return queryInterface.addIndex(questionAnswers, ['questionId']);
         });
     },
-
     down: (queryInterface, Sequelize) => {
         return queryInterface.dropTable(questionImages).then(() => {
             return queryInterface.dropTable(questionAnswers).then(() => {
@@ -85,4 +84,5 @@ module.exports = {
             });
         });
     }
-};
+}
+;
