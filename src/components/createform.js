@@ -23,6 +23,10 @@ class CreateForm extends React.Component {
 
         data.append('question', this.state.question);
         data.append('file', this.state.file);
+        data.append('cropX', this.state.pixelCrop.x);
+        data.append('cropY', this.state.pixelCrop.y);
+        data.append('cropW', this.state.pixelCrop.width);
+        data.append('cropH', this.state.pixelCrop.height);
 
         fetch('/questions/add', {
             method: 'POST',
@@ -52,6 +56,12 @@ class CreateForm extends React.Component {
         };
 
         reader.readAsDataURL(file);
+    }
+
+    onComplete(crop, pixelCrop) {
+        this.setState({
+            pixelCrop: pixelCrop
+        });
     }
 
     render() {
@@ -122,7 +132,7 @@ class CreateForm extends React.Component {
                         <label>Изображение:</label>
                         <input type="file" onChange={this.onInputFileChange.bind(this)}
                                value={this.state.originalImage}/>
-                        <ReactCrop src={this.state.data_uri} crop={crop}/>
+                        <ReactCrop src={this.state.data_uri} crop={crop} onComplete={this.onComplete.bind(this)}/>
                     </div>
                     <div className="col-xs-6">
                         <button className="btn btn-sm btn-default pull-right"
