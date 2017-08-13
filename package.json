@@ -18,6 +18,7 @@
   "homepage": "https://github.com/evgeniy2194/question_manager#readme",
   "dependencies": {
     "body-parser": "^1.17.2",
+    "bootstrap": "^4.0.0-beta",
     "express": "^4.15.4",
     "jimp": "^0.2.28",
     "material-ui": "^1.0.0-beta.4",
