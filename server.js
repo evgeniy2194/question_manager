@@ -7,7 +7,7 @@ const multer = require('multer');
 const Jimp = require("jimp");
 
 const models = require('./database/models');
-const Question = models.QuestionImage;
+const Question = models.Question;
 const QuestionImage = models.QuestionImage;
 const QuestionAnswer = models.QuestionAnswer;
 
