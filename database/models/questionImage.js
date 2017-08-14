@@ -7,6 +7,10 @@ module.exports = connect.define('QuestionImage', {
         primaryKey: true,
         autoIncrement: true
     },
+    questionId: {
+        type: Sequelize.INTEGER.UNSIGNED,
+        allowNull: false
+    },
     origin: {
         type: Sequelize.STRING,
         allowNull: false

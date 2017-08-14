@@ -8,8 +8,7 @@ module.exports = connect.define('QuestionAnswer', {
         autoIncrement: true
     },
     questionId: {
-        type: Sequelize.INTEGER.UNSIGNED,
-        allowNull: false
+        type: Sequelize.INTEGER.UNSIGNED
     },
     answer: {
         type: Sequelize.STRING,

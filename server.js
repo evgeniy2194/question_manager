@@ -56,11 +56,11 @@ app.post('/questions/add', upload.single('file'), function (req, res) {
             {answer: body.answer3, isCorrect: false},
             {answer: body.answer4, isCorrect: false}
         ],
-        image: {}
+        // image: {}
     }, {
         include: [
             {model: QuestionAnswer, as: 'answers'},
-            {model: QuestionImage, as: 'image'}
+            // {model: QuestionImage, as: 'image'}
         ]
     }).then(function (question) {
         console.log('success');
