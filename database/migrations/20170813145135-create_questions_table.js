@@ -6,47 +6,48 @@ const questionAnswers = 'QuestionAnswers';
 
 module.exports = {
     up: (queryInterface, Sequelize) => {
-        return queryInterface.createTable(questionImages, {
+        return queryInterface.createTable(questions, {
             id: {
                 type: Sequelize.INTEGER.UNSIGNED,
                 primaryKey: true,
                 autoIncrement: true
             },
-            origin: {
+            question: {
                 type: Sequelize.STRING,
-                allowNull: false
-            },
-            thumb: {
-                type: Sequelize.STRING,
-                allowNull: false
-            },
-            x: Sequelize.INTEGER,
-            y: Sequelize.INTEGER,
-            width: Sequelize.INTEGER,
-            height: Sequelize.INTEGER
+                allowNull: false,
+            }
         }, {
             charset: 'UTF8',
         }).then(() => {
-            return queryInterface.createTable(questions, {
+            return queryInterface.createTable(questionImages, {
                 id: {
                     type: Sequelize.INTEGER.UNSIGNED,
                     primaryKey: true,
                     autoIncrement: true
                 },
-                question: {
-                    type: Sequelize.STRING,
-                    allowNull: false,
-                },
-                imageId: {
+                questionId: {
                     type: Sequelize.INTEGER.UNSIGNED,
+                    allowNull: false,
                     references: {
-                        model: questionImages,
+                        model: questions,
                         key: 'id'
                     },
-                }
+                },
+                origin: {
+                    type: Sequelize.STRING,
+                    allowNull: false
+                },
+                thumb: {
+                    type: Sequelize.STRING,
+                    allowNull: false
+                },
+                x: Sequelize.INTEGER,
+                y: Sequelize.INTEGER,
+                width: Sequelize.INTEGER,
+                height: Sequelize.INTEGER
             }, {
                 charset: 'UTF8',
-            });
+            })
         }).then(() => {
             return queryInterface.createTable(questionAnswers, {
                 id: {

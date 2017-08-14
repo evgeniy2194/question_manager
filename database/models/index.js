@@ -4,7 +4,8 @@ const QuestionImage = require('./questionImage');
 
 Question.hasMany(QuestionAnswer, {as: 'answers'});
 Question.hasOne(QuestionImage, {as: 'image'});
-// QuestionAnswer.belongsTo(Question, {as: 'question'});
+QuestionAnswer.belongsTo(Question, {as: 'question'});
+QuestionImage.belongsTo(Question, {as: 'question'});
 
 module.exports = {
     Question: Question,
