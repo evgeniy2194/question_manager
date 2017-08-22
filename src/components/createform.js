@@ -9,7 +9,7 @@ class CreateForm extends React.Component {
         super(props);
 
         this.state = {
-            data_uri: null,
+            imageSrc: 'http://zagonka.ru/uploads/posts/2015-03/1426894132_2485901.jpg',
             filename: null,
             filetype: null,
             crop: {aspect: 16 / 9},
@@ -22,25 +22,28 @@ class CreateForm extends React.Component {
     submit(event) {
         event.preventDefault();
 
-        const data = new FormData();
+        const data = {};
 
-        data.append('question', this.state.question);
-        data.append('cotegory', this.state.cotegory);
-        data.append('answer1', this.state.answer1);
-        data.append('answer2', this.state.answer2);
-        data.append('answer3', this.state.answer3);
-        data.append('answer4', this.state.answer4);
-        data.append('file', this.state.file);
-        data.append('cropX', this.state.pixelCrop.x);
-        data.append('cropY', this.state.pixelCrop.y);
-        data.append('cropW', this.state.pixelCrop.width);
-        data.append('cropH', this.state.pixelCrop.height);
+        data.question = this.state.question;
+        data.cotegory = this.state.cotegory;
+        data.answer1 = this.state.answer1;
+        data.answer2 = this.state.answer2;
+        data.answer3 = this.state.answer3;
+        data.answer4 = this.state.answer4;
+        data.imageSrc = this.state.imageSrc;
+        data.cropX = this.state.pixelCrop.x;
+        data.cropY = this.state.pixelCrop.y;
+        data.cropW = this.state.pixelCrop.width;
+        data.cropH = this.state.pixelCrop.height;
 
         fetch('/questions/add', {
             method: 'POST',
-            body: data
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            }
         });
-        console.log(this.state);
     }
 
     handleChange(event) {
@@ -140,14 +143,17 @@ class CreateForm extends React.Component {
                         <div className="form-group row">
                             <label className="col-sm-3 col-form-label">Изображение:</label>
                             <div className="col-sm-9">
-                                <input className="form-control form-control-sm" type="file"
-                                       onChange={this.onInputFileChange.bind(this)}
-                                       value={this.state.originalImage}/>
+                                <input className="form-control form-control-sm"
+                                       name="imageSrc"
+                                       onChange={this.handleChange}
+                                       value={this.state.imageSrc}/>
                             </div>
                         </div>
 
                         <div className="form-group row">
-                            <ReactCrop src={this.state.data_uri} crop={this.state.crop}
+                            <small class="text-muted">Высота: {this.state.pixelCrop.height || 0}px,&nbsp;</small>
+                            <small class="text-muted">Ширина: {this.state.pixelCrop.width || 0}px</small>
+                            <ReactCrop src={this.state.imageSrc} crop={this.state.crop}
                                        onComplete={this.onComplete.bind(this)}/>
                         </div>
 

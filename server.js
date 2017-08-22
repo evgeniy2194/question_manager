@@ -1,16 +1,18 @@
 'use strict';
 
-const express = require('express');
-const app = express();
-const fs = require('fs');
-const bodyParser = require('body-parser');
-const multer = require('multer');
-const Jimp = require("jimp");
+let http = require('http');
+let https = require("https");
+let express = require('express');
+let app = express();
+let fs = require('fs');
+let bodyParser = require('body-parser');
+let multer = require('multer');
+let Jimp = require("jimp");
 
-const models = require('./database/models');
-const Question = models.Question;
-const QuestionImage = models.QuestionImage;
-const QuestionAnswer = models.QuestionAnswer;
+let models = require('./database/models');
+let Question = models.Question;
+let QuestionImage = models.QuestionImage;
+let QuestionAnswer = models.QuestionAnswer;
 
 app.use(express.static('static'));
 app.use(bodyParser.json());       // to support JSON-encoded bodies
@@ -18,7 +20,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
 
-const upload = multer({dest: './uploads/'});
+let upload = multer({dest: './uploads/'});
 
 app.listen(3000, function () {
     console.log('Example app listening on port 3000!');
@@ -30,7 +32,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/categories', function (req, res) {
-    const categories = [
+    let categories = [
         {name: 'category1'},
         {name: 'category2'}
     ];
@@ -39,76 +41,71 @@ app.get('/categories', function (req, res) {
 });
 
 app.post('/questions/add', upload.single('file'), function (req, res) {
-    const body = req.body;
-    const cropX = body.cropX;
-    const cropY = body.cropY;
-    const cropW = body.cropW;
-    const cropH = body.cropH;
+    let body = req.body;
 
+    /** Crop settings **/
+    let cropX = body.cropX;
+    let cropY = body.cropY;
+    let cropW = body.cropW;
+    let cropH = body.cropH;
 
-    /** Load file */
-    const file = req.file;
-    // const srcPath = file.destination + file.filename;
-    const dir = './static/uploads';
-    const originalname = file.originalname;
-    const extension = originalname.split('.').slice(-1).pop();
-    const oldPath = file.destination + '/' + file.filename;
-    const date = new Date();
-    const seconds = date.getTime();
-    const originName = seconds + '_origin.' + extension;
-    const thumbName = seconds + '_thumb.' + extension;
+    /** Load and save image **/
+    let imageSrc = body.imageSrc;
+    let dir = './static/uploads';
+    let date = new Date();
+    let seconds = date.getTime();
 
-    //Create directory
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
     }
 
-    //Move and rename origin file
-    const source = fs.createReadStream(oldPath);
-    const destination = fs.createWriteStream(dir + '/' + originName);
+    let originName = '';
+    let thumbName = '';
 
-    source.pipe(destination, {end: false});
-    source.on("end", function () {
-        fs.unlinkSync(oldPath);
-    });
+    Jimp.read(imageSrc).then(function (image) {
+        let extension = image.getExtension();
 
-    //Crop, set quality and save
-    Jimp.read(oldPath, function (err, image) {
-        if (err) throw err;
+        originName = seconds + '_origin.' + extension;
+        thumbName = seconds + '_thumb.' + extension;
 
-        image.crop(parseInt(cropX), parseInt(cropY), parseInt(cropW), parseInt(cropH))
+        let writePromise = image.write(dir + '/' + originName);
+        let cropPromise = image.crop(parseInt(cropX), parseInt(cropY), parseInt(cropW), parseInt(cropH))
             .quality(60)
             .write(dir + '/' + thumbName);
-    });
 
-    //Save data to database
-    Question.create({
-        question: body.question,
-        category: body.category,
-        answers: [
-            {answer: body.answer1, isCorrect: true},
-            {answer: body.answer2, isCorrect: false},
-            {answer: body.answer3, isCorrect: false},
-            {answer: body.answer4, isCorrect: false}
-        ],
-        image: {
-            origin: originName,
-            thumb: thumbName,
-            x: cropX,
-            y: cropY,
-            width: cropW,
-            height: cropH
-        }
-    }, {
-        include: [
-            {model: QuestionAnswer, as: 'answers'},
-            {model: QuestionImage, as: 'image'}
-        ]
-    }).then(function (question) {
-        console.log('success');
-    }).catch(function (error) {
-        console.log(error);
-    });
+        return Promise.all([writePromise, cropPromise]);
+    }).then(function (data) {
+        let origin = data[0];
+        let thumb = data[1];
 
-    res.send({success: true});
+        // Save data to database
+        return Question.create({
+            question: body.question,
+            category: body.category,
+            answers: [
+                {answer: body.answer1, isCorrect: true},
+                {answer: body.answer2, isCorrect: false},
+                {answer: body.answer3, isCorrect: false},
+                {answer: body.answer4, isCorrect: false}
+            ],
+            image: {
+                origin: originName,
+                thumb: thumbName,
+                x: cropX,
+                y: cropY,
+                width: cropW,
+                height: cropH
+            }
+        }, {
+            include: [
+                {model: QuestionAnswer, as: 'answers'},
+                {model: QuestionImage, as: 'image'}
+            ]
+        });
+    }).then(function () {
+        res.send({success: true});
+    }).catch(function (err) {
+        console.log(err);
+        res.send({success: false});
+    });
 });
