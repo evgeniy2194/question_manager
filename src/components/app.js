@@ -1,14 +1,19 @@
 import React from 'react';
 import CreateFrom from './createform';
+import Search from './search';
 
 class App extends React.Component {
     render() {
-        return <div>
-            <div className="col-md-5">
-                <CreateFrom />
+        return <p>
+            <div className="row">
+                <div className="col-md-6">
+                    <CreateFrom/>
+                </div>
+                <div className="col-md-6">
+                    <Search/>
+                </div>
             </div>
-            <div className="col-md-7"></div>
-        </div>
+        </p>
     }
 }
 

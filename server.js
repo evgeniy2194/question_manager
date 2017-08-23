@@ -40,6 +40,35 @@ app.get('/categories', function (req, res) {
     res.send(categories);
 });
 
+app.get('/search', function (req, res) {
+    let question = req.query.question;
+    let answer = req.query.answer;
+
+    Question.findAll({
+        attributes: ['id'],
+        limit: 100,
+        where: question ? {question: {$like: '%' + question + '%'}} : {},
+        include: [{
+            model: QuestionAnswer,
+            as: 'answers',
+            where: answer ? {answer: {$like: '%' + answer + '%'}} : {}
+        }]
+    }).then(response => {
+        return Question.findAll({
+            where: {id: {$in: response.map(row => row.get('id'))}},
+            include: [
+                {model: QuestionAnswer, as: 'answers'},
+                {model: QuestionImage, as: 'image'}
+            ]
+        });
+    }).then(response => {
+        res.send(response.map(row => row.get({plain: true})));
+    }).catch(error => {
+        console.log(error);
+        res.send({});
+    });
+});
+
 app.post('/questions/add', upload.single('file'), function (req, res) {
     let body = req.body;
 
@@ -75,9 +104,6 @@ app.post('/questions/add', upload.single('file'), function (req, res) {
 
         return Promise.all([writePromise, cropPromise]);
     }).then(function (data) {
-        let origin = data[0];
-        let thumb = data[1];
-
         // Save data to database
         return Question.create({
             question: body.question,

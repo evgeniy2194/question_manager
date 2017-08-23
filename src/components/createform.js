@@ -166,16 +166,21 @@ class CreateForm extends React.Component {
                         </div>
 
                         <div className="form-group row">
-                            <small className="text-muted">Высота: {this.state.pixelCrop.height || 0}px,&nbsp;</small>
-                            <small className="text-muted">Ширина: {this.state.pixelCrop.width || 0}px</small>
-                            <ReactCrop src={this.state.imageSrc} crop={this.state.crop}
-                                       onComplete={this.onComplete.bind(this)}/>
+                            <div className="col-md-12">
+                                <small className="text-muted">
+                                    Высота: {this.state.pixelCrop.height || 0}px,&nbsp;</small>
+                                <small className="text-muted">Ширина: {this.state.pixelCrop.width || 0}px</small>
+                                <ReactCrop src={this.state.imageSrc} crop={this.state.crop}
+                                           onComplete={this.onComplete.bind(this)}/>
+                            </div>
                         </div>
 
-                        <div className="form-group row">
-                            <button className="btn btn-sm btn-default ml-auto"
-                                    onClick={this.submit.bind(this)}>Добавить
-                            </button>
+                        <div className="row">
+                            <div className="col-md-12">
+                                <button className="btn btn-sm btn-default ml-auto"
+                                        onClick={this.submit.bind(this)}>Добавить
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
