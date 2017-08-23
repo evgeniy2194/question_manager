@@ -9,6 +9,7 @@ module.exports = connect.define('QuestionImage', {
     },
     questionId: {
         type: Sequelize.INTEGER.UNSIGNED,
+        defaultValue: null
     },
     origin: {
         type: Sequelize.STRING,
