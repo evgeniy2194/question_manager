@@ -8,21 +8,30 @@ class CreateForm extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
+        this.initialState = {
             imageSrc: 'http://zagonka.ru/uploads/posts/2015-03/1426894132_2485901.jpg',
             filename: null,
             filetype: null,
-            crop: {aspect: 16 / 9},
+            crop: {
+                aspect: 16 / 9
+            },
             pixelCrop: {}
         };
 
+        this.state = this.initialState;
+
         this.handleChange = this.handleChange.bind(this);
+    }
+
+    reset() {
+        this.setState(this.initialState);
     }
 
     submit(event) {
         event.preventDefault();
 
         const data = {};
+        const self = this;
 
         data.question = this.state.question;
         data.cotegory = this.state.cotegory;
@@ -42,6 +51,12 @@ class CreateForm extends React.Component {
             headers: {
                 'Accept': 'application/json, text/plain, */*',
                 'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            return response.json();
+        }).then(data => {
+            if (data.success === true) {
+                self.reset();
             }
         });
     }
@@ -151,8 +166,8 @@ class CreateForm extends React.Component {
                         </div>
 
                         <div className="form-group row">
-                            <small class="text-muted">Высота: {this.state.pixelCrop.height || 0}px,&nbsp;</small>
-                            <small class="text-muted">Ширина: {this.state.pixelCrop.width || 0}px</small>
+                            <small className="text-muted">Высота: {this.state.pixelCrop.height || 0}px,&nbsp;</small>
+                            <small className="text-muted">Ширина: {this.state.pixelCrop.width || 0}px</small>
                             <ReactCrop src={this.state.imageSrc} crop={this.state.crop}
                                        onComplete={this.onComplete.bind(this)}/>
                         </div>
