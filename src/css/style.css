@@ -26,3 +26,8 @@
 .search-list {
     padding: 0;
 }
+
+.media:hover {
+    cursor: pointer;
+    background-color: #ececec;
+}

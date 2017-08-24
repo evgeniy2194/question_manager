@@ -9,9 +9,12 @@ class CreateForm extends React.Component {
         super(props);
 
         this.initialState = {
-            imageSrc: 'http://zagonka.ru/uploads/posts/2015-03/1426894132_2485901.jpg',
-            filename: null,
-            filetype: null,
+            question: '',
+            answer1: '',
+            answer2: '',
+            answer3: '',
+            answer4: '',
+            imageSrc: '',
             crop: {
                 aspect: 16 / 9
             },
@@ -21,6 +24,41 @@ class CreateForm extends React.Component {
         this.state = this.initialState;
 
         this.handleChange = this.handleChange.bind(this);
+        this.onQuestionSearchClick = this.onQuestionSearchClick.bind(this);
+        this.onAnswerSearchClick = this.onAnswerSearchClick.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.editableQuestion) {
+            let question = nextProps.editableQuestion;
+
+            this.setState({
+                question: question.question,
+                answer1: question.answers[0].answer,
+                answer2: question.answers[1].answer,
+                answer3: question.answers[2].answer,
+                answer4: question.answers[3].answer,
+                imageSrc: '/uploads/' + question.image.origin,
+                pixelCrop: {
+                    x: question.image.x,
+                    y: question.image.y,
+                    width: question.image.width,
+                    height: question.image.height
+                }
+            });
+        }
+    }
+
+    onQuestionSearchClick(event) {
+        event.preventDefault();
+
+        this.props.onQuestionSearchClick(this.state.question);
+    }
+
+    onAnswerSearchClick(event) {
+        event.preventDefault();
+
+        this.props.onAnswerSearchClick(this.state.answer1);
     }
 
     reset() {
@@ -84,6 +122,8 @@ class CreateForm extends React.Component {
     }
 
     onComplete(crop, pixelCrop) {
+        console.log(crop);
+        console.log(pixelCrop);
         this.setState({crop, pixelCrop});
     }
 
@@ -98,10 +138,19 @@ class CreateForm extends React.Component {
                         <div className="form-group row">
                             <label className="col-sm-3 col-form-label">Вопрос:</label>
                             <div className="col-sm-9">
-                            <textarea className="form-control form-control-sm"
-                                      name="question"
-                                      onChange={this.handleChange}
-                                      value={this.state.question}/>
+                                <div className="input-group">
+                                    <input className="form-control form-control-sm"
+                                           name="question"
+                                           type="text"
+                                           onChange={this.handleChange}
+                                           value={this.state.question}/>
+                                    <span className="input-group-btn">
+                                        <button className="btn btn-sm btn-secondary"
+                                                onClick={this.onQuestionSearchClick}>
+                                            Go!
+                                        </button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
@@ -121,10 +170,19 @@ class CreateForm extends React.Component {
                         <div className="form-group row">
                             <label className="col-sm-3 col-form-label">Ответы:</label>
                             <div className="col-sm-9">
-                                <input className="form-control form-control-sm"
-                                       name="answer1"
-                                       onChange={this.handleChange}
-                                       value={this.state.answer1}/>
+                                <div className="input-group">
+                                    <input className="form-control form-control-sm"
+                                           name="answer1"
+                                           type="text"
+                                           onChange={this.handleChange}
+                                           value={this.state.answer1}/>
+                                    <span className="input-group-btn">
+                                        <button className="btn btn-sm btn-secondary"
+                                                onClick={this.onAnswerSearchClick}>
+                                            Go!
+                                        </button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
@@ -132,6 +190,7 @@ class CreateForm extends React.Component {
                             <div className="col-sm-9 ml-auto">
                                 <input className="form-control form-control-sm"
                                        name="answer2"
+                                       type="text"
                                        onChange={this.handleChange}
                                        value={this.state.answer2}/>
                             </div>
@@ -141,6 +200,7 @@ class CreateForm extends React.Component {
                             <div className="col-sm-9 ml-auto">
                                 <input className="form-control form-control-sm"
                                        name="answer3"
+                                       type="text"
                                        onChange={this.handleChange}
                                        value={this.state.answer3}/>
                             </div>
@@ -150,6 +210,7 @@ class CreateForm extends React.Component {
                             <div className="col-sm-9 ml-auto">
                                 <input className="form-control form-control-sm"
                                        name="answer4"
+                                       type="text"
                                        onChange={this.handleChange}
                                        value={this.state.answer4}/>
                             </div>
@@ -160,6 +221,7 @@ class CreateForm extends React.Component {
                             <div className="col-sm-9">
                                 <input className="form-control form-control-sm"
                                        name="imageSrc"
+                                       type="text"
                                        onChange={this.handleChange}
                                        value={this.state.imageSrc}/>
                             </div>

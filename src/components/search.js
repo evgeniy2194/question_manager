@@ -15,6 +15,20 @@ class Search extends React.Component {
         this.search = this.search.bind(this);
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.questionToSearch !== '') {
+            this.setState({question: nextProps.questionToSearch});
+        }
+
+        if (nextProps.answerToSearch !== '') {
+            this.setState({answer: nextProps.answerToSearch});
+        }
+    }
+
+    handleDoubleClick(item) {
+        this.props.onEditQuestionClick(item);
+    }
+
     search(event) {
         event.preventDefault();
 
@@ -43,6 +57,7 @@ class Search extends React.Component {
                             <label className="col-sm-3 col-form-label">Вопрос:</label>
                             <div className="col-sm-9">
                                 <input className="form-control form-control-sm"
+                                       type="text"
                                        placeholder="Вопрос"
                                        name="question"
                                        onChange={this.handleChange}
@@ -53,6 +68,7 @@ class Search extends React.Component {
                             <label className="col-sm-3 col-form-label">Ответ:</label>
                             <div className="col-sm-9">
                                 <input className="form-control form-control-sm"
+                                       type="text"
                                        placeholder="Ответ"
                                        name="answer"
                                        onChange={this.handleChange}
@@ -69,13 +85,15 @@ class Search extends React.Component {
                     </form>
                     <ul className="search-list">
                         {this.state.result.map(item => {
-                            return <li className="media my-3">
+                            return <li className="media my-3"
+                                       key={item.id}
+                                       onDoubleClick={this.handleDoubleClick.bind(this, item)}>
                                 <img className="img-sm d-flex mr-3" src={'/uploads/' + item.image.thumb}/>
                                 <div className="media-body">
                                     <h6 className="mt-0 mb-1">#{item.id + ' ' + item.question}</h6>
                                     <div className="row">
                                         {item.answers.map(answer => {
-                                            return <div className="col-sm-6">{answer.answer}</div>
+                                            return <div className="col-sm-6" key={answer.id}>{answer.answer}</div>
                                         })}
                                     </div>
                                 </div>
