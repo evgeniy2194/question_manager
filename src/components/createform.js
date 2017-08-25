@@ -26,6 +26,7 @@ class CreateForm extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.onQuestionSearchClick = this.onQuestionSearchClick.bind(this);
         this.onAnswerSearchClick = this.onAnswerSearchClick.bind(this);
+        this.onImageLoaded = this.onImageLoaded.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -122,9 +123,25 @@ class CreateForm extends React.Component {
     }
 
     onComplete(crop, pixelCrop) {
-        console.log(crop);
-        console.log(pixelCrop);
         this.setState({crop, pixelCrop});
+    }
+
+    onImageLoaded(crop, image, pixelCrop) {
+        const naturalHeight = image.naturalHeight;
+        const naturalWidth = image.naturalWidth;
+        const serverPixelCrop = this.state.pixelCrop;
+
+        if (serverPixelCrop.x !== null && serverPixelCrop.y !== null && serverPixelCrop.height && serverPixelCrop.width) {
+            this.setState({
+                crop: {
+                    x: serverPixelCrop.x / naturalWidth * 100,
+                    y: serverPixelCrop.y / naturalHeight * 100,
+                    width: serverPixelCrop.width / naturalWidth * 100,
+                    height: serverPixelCrop.height / naturalHeight * 100,
+                    aspect: 16 / 9
+                }
+            });
+        }
     }
 
     render() {
@@ -233,6 +250,7 @@ class CreateForm extends React.Component {
                                     Высота: {this.state.pixelCrop.height || 0}px,&nbsp;</small>
                                 <small className="text-muted">Ширина: {this.state.pixelCrop.width || 0}px</small>
                                 <ReactCrop src={this.state.imageSrc} crop={this.state.crop}
+                                           onImageLoaded={this.onImageLoaded}
                                            onComplete={this.onComplete.bind(this)}/>
                             </div>
                         </div>
