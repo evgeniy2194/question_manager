@@ -70,52 +70,40 @@ app.get('/search', function (req, res) {
 
 app.post('/questions/add', upload.single('file'), function (req, res) {
     let body = req.body;
-
-    /** Crop settings **/
-    let cropX = parseInt(body.cropX);
-    let cropY = parseInt(body.cropY);
-    let cropW = parseInt(body.cropW);
-    let cropH = parseInt(body.cropH);
-
-    /** Load and save image **/
-    let imageSrc = body.imageSrc;
     let dir = './static/uploads';
-    let date = new Date();
-    let seconds = date.getTime();
 
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
     }
 
     let id = body.id;
+    let imageSrc = body.imageSrc;
+
     let questionPromise = Promise.resolve(null);
-    let imagePromise = Jimp.read(imageSrc);
+    let imagePromise = imageSrc ? Jimp.read(imageSrc) : Promise.resolve(null);
 
     if (id) {
         questionPromise = Question.find({
-            where: {
-                id: id
-            },
+            where: {id: id},
             include: [{model: QuestionAnswer, as: 'answers'}, {model: QuestionImage, as: 'image'}]
         });
     } else {
-        questionPromise = Question.create({
-            question: body.question,
-            category: body.category,
-            answers: [
-                {answer: body.answer1, isCorrect: true},
-                {answer: body.answer2, isCorrect: false},
-                {answer: body.answer3, isCorrect: false},
-                {answer: body.answer4, isCorrect: false}
-            ]
-        }, {
+        questionPromise = Question.build({}, {
             include: [{model: QuestionAnswer, as: 'answers'}, {model: QuestionImage, as: 'image'}]
         });
     }
 
     Promise.all([questionPromise, imagePromise]).then(function (data) {
-        let q = data[0],
-            image = data[1];
+        let q = data[0];
+        let image = data[1];
+
+        q.question = body.question;
+        q.setAnswers([
+            {id: 9, answer: body.answer1, isCorrect: true},
+            {id: 10, answer: body.answer2, isCorrect: false},
+            {id: 11, answer: body.answer3, isCorrect: false},
+            {id: 12, answer: body.answer4, isCorrect: false}
+        ]);
 
         /**
          * is has image?
@@ -123,29 +111,30 @@ app.post('/questions/add', upload.single('file'), function (req, res) {
          * is crop position change?
          */
         let newImageName = imageSrc.split('/').splice(-1).pop();
-        let oldImage = q && q.image ? q.image.origin : null;
+        let oldImage = q && q.image || null;
+        let questionImage = oldImage || QuestionImage.build({});
         let promises = [];
-        let isNewImage = true;
-
-        if (q.image) {
-            isNewImage = false;
-        }
-
-        let questionImage = isNewImage ? QuestionImage.build({}) : q.image;
 
         if (image) {
+            /** Crop settings **/
+            let cropX = parseInt(body.cropX);
+            let cropY = parseInt(body.cropY);
+            let cropW = parseInt(body.cropW);
+            let cropH = parseInt(body.cropH);
+            let date = new Date();
+            let seconds = date.getTime();
             let extension = image.getExtension();
             let originName = seconds + '.' + extension;
             let thumbName = seconds + '_thumb.' + extension;
 
-            if (newImageName !== oldImage) {
+            if (!oldImage || newImageName !== oldImage.origin) {
                 questionImage.origin = originName;
                 promises.push(image.write(dir + '/' + originName));
             } else {
                 questionImage.origin = q.image.origin;
             }
 
-            if (!q.image || (q.image.x !== cropX || q.image.y !== cropY || q.image.width !== cropW || q.image.height !== cropH )) {
+            if (!oldImage || (oldImage.x !== cropX || oldImage.y !== cropY || oldImage.width !== cropW || oldImage.height !== cropH )) {
                 questionImage.thumb = thumbName;
                 questionImage.x = cropX;
                 questionImage.y = cropY;
@@ -154,15 +143,16 @@ app.post('/questions/add', upload.single('file'), function (req, res) {
             }
 
             promises.push(image.crop(cropX, cropY, cropW, cropH).quality(60).write(dir + '/' + thumbName));
-            promises.push(isNewImage ? q.setImage(questionImage) : questionImage.save());
+            promises.push(oldImage ? questionImage.save() : q.setImage(questionImage));
+        } else {
+            oldImage && oldImage.destroy({force: true});
         }
 
         promises.push(q.save());
 
         return Promise.all(promises);
     }).then(function () {
-        // res.send({success: true});
-        res.send({success: false});
+        res.send({success: true});
     }).catch(function (err) {
         console.log(err);
         res.send({success: false});

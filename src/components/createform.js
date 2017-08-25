@@ -35,6 +35,7 @@ class CreateForm extends React.Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.editableQuestion) {
             let question = nextProps.editableQuestion;
+            let url = window.location.protocol + '//' + window.location.host + '/';
 
             this.setState({
                 id: question.id,
@@ -43,8 +44,8 @@ class CreateForm extends React.Component {
                 answer2: question.answers[1].answer,
                 answer3: question.answers[2].answer,
                 answer4: question.answers[3].answer,
-                imageSrc: window.location.protocol + '//' + window.location.host + '/uploads/' + question.image.origin,
-                pixelCrop: {
+                imageSrc: question.image ? url + 'uploads/' + question.image.origin : '',
+                pixelCrop: !question.image ? {} : {
                     x: question.image.x,
                     y: question.image.y,
                     width: question.image.width,
