@@ -77,9 +77,11 @@ class Search extends React.Component {
                         </div>
                         <div className="row">
                             <div className="col-sm-12">
-                                <button className="btn btn-sm btn-default ml-auto" onClick={this.search}>
-                                    Поиск
-                                </button>
+                                <span className="float-right">
+                                    <button className="btn btn-sm btn-default ml-auto" onClick={this.search}>
+                                        Поиск
+                                    </button>
+                                </span>
                             </div>
                         </div>
                     </form>
@@ -88,7 +90,8 @@ class Search extends React.Component {
                             return <li className="media my-3"
                                        key={item.id}
                                        onDoubleClick={this.handleDoubleClick.bind(this, item)}>
-                                <img className="img-sm d-flex mr-3" src={item.image ? '/uploads/' + item.image.thumb : ''}/>
+                                <img className="img-sm d-flex mr-3"
+                                     src={item.image ? '/uploads/' + item.image.thumb : ''}/>
                                 <div className="media-body">
                                     <h6 className="mt-0 mb-1">#{item.id + ' ' + item.question}</h6>
                                     <div className="row">

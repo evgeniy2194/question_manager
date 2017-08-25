@@ -31,3 +31,7 @@
     cursor: pointer;
     background-color: #ececec;
 }
+
+.material-icons {
+    font-size: inherit;
+}

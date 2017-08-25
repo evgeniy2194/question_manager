@@ -28,6 +28,7 @@ class CreateForm extends React.Component {
         this.onQuestionSearchClick = this.onQuestionSearchClick.bind(this);
         this.onAnswerSearchClick = this.onAnswerSearchClick.bind(this);
         this.onImageLoaded = this.onImageLoaded.bind(this);
+        this.onImageRemoveClick = this.onImageRemoveClick.bind(this);
         this.reset = this.reset.bind(this);
     }
 
@@ -63,6 +64,15 @@ class CreateForm extends React.Component {
         event.preventDefault();
 
         this.props.onAnswerSearchClick(this.state.answer1);
+    }
+
+    onImageRemoveClick(event) {
+        event.preventDefault();
+
+        this.setState({
+            imageSrc: '',
+            pixelCrop: {}
+        });
     }
 
     reset(event) {
@@ -171,7 +181,7 @@ class CreateForm extends React.Component {
                                     <span className="input-group-btn">
                                         <button className="btn btn-sm btn-secondary"
                                                 onClick={this.onQuestionSearchClick}>
-                                            Go!
+                                            <i className="material-icons">search</i>
                                         </button>
                                     </span>
                                 </div>
@@ -203,7 +213,7 @@ class CreateForm extends React.Component {
                                     <span className="input-group-btn">
                                         <button className="btn btn-sm btn-secondary"
                                                 onClick={this.onAnswerSearchClick}>
-                                            Go!
+                                            <i className="material-icons">search</i>
                                         </button>
                                     </span>
                                 </div>
@@ -243,14 +253,22 @@ class CreateForm extends React.Component {
                         <div className="form-group row">
                             <label className="col-sm-3 col-form-label">Изображение:</label>
                             <div className="col-sm-9">
-                                <input className="form-control form-control-sm"
-                                       name="imageSrc"
-                                       type="text"
-                                       onChange={this.handleChange}
-                                       value={this.state.imageSrc}/>
+                                <div className="input-group">
+                                    <input className="form-control form-control-sm"
+                                           name="imageSrc"
+                                           type="text"
+                                           onChange={this.handleChange}
+                                           value={this.state.imageSrc}/>
+                                    <span className="input-group-btn">
+                                        <button className="btn btn-sm btn-secondary" onClick={this.onImageRemoveClick}>
+                                            <i className="material-icons">clear</i>
+                                        </button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
+                        {this.state.imageSrc &&
                         <div className="form-group row">
                             <div className="col-md-12">
                                 <small className="text-muted">
@@ -261,16 +279,18 @@ class CreateForm extends React.Component {
                                            onComplete={this.onComplete.bind(this)}/>
                             </div>
                         </div>
+                        }
 
                         <div className="row">
                             <div className="col-md-12">
-                                <button className="btn btn-sm btn-default ml-auto"
-                                        onClick={this.submit.bind(this)}>
-                                    { this.state.id ? 'Созранить' : 'Добавить' }
-                                </button>
-                                <button className="btn btn-sm btn-default ml-auto" onClick={this.reset}>
-                                    Сбросить
-                                </button>
+                                <div className="float-right">
+                                    <button className="btn btn-sm btn-default mr-2" onClick={this.reset}>
+                                        Сбросить
+                                    </button>
+                                    <button className="btn btn-sm btn-default" onClick={this.submit.bind(this)}>
+                                        {this.state.id ? 'Созранить' : 'Добавить'}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </form>
