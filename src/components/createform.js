@@ -9,6 +9,7 @@ class CreateForm extends React.Component {
         super(props);
 
         this.initialState = {
+            id: '',
             question: '',
             answer1: '',
             answer2: '',
@@ -27,6 +28,7 @@ class CreateForm extends React.Component {
         this.onQuestionSearchClick = this.onQuestionSearchClick.bind(this);
         this.onAnswerSearchClick = this.onAnswerSearchClick.bind(this);
         this.onImageLoaded = this.onImageLoaded.bind(this);
+        this.reset = this.reset.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -34,12 +36,13 @@ class CreateForm extends React.Component {
             let question = nextProps.editableQuestion;
 
             this.setState({
+                id: question.id,
                 question: question.question,
                 answer1: question.answers[0].answer,
                 answer2: question.answers[1].answer,
                 answer3: question.answers[2].answer,
                 answer4: question.answers[3].answer,
-                imageSrc: '/uploads/' + question.image.origin,
+                imageSrc: window.location.protocol + '//' + window.location.host + '/uploads/' + question.image.origin,
                 pixelCrop: {
                     x: question.image.x,
                     y: question.image.y,
@@ -62,7 +65,10 @@ class CreateForm extends React.Component {
         this.props.onAnswerSearchClick(this.state.answer1);
     }
 
-    reset() {
+    reset(event) {
+        if (event) {
+            event.preventDefault();
+        }
         this.setState(this.initialState);
     }
 
@@ -258,7 +264,11 @@ class CreateForm extends React.Component {
                         <div className="row">
                             <div className="col-md-12">
                                 <button className="btn btn-sm btn-default ml-auto"
-                                        onClick={this.submit.bind(this)}>Добавить
+                                        onClick={this.submit.bind(this)}>
+                                    { this.state.id ? 'Созранить' : 'Добавить' }
+                                </button>
+                                <button className="btn btn-sm btn-default ml-auto" onClick={this.reset}>
+                                    Сбросить
                                 </button>
                             </div>
                         </div>
