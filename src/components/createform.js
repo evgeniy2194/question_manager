@@ -206,6 +206,9 @@ class CreateForm extends React.Component {
                             <label className="col-sm-3 col-form-label">Ответы:</label>
                             <div className="col-sm-9">
                                 <div className="input-group">
+                                    <span className="input-group-addon">
+                                        <input type="radio" name="isCorrect"/>
+                                    </span>
                                     <input className="form-control form-control-sm"
                                            name="answer1"
                                            type="text"
@@ -223,31 +226,46 @@ class CreateForm extends React.Component {
 
                         <div className="form-group row">
                             <div className="col-sm-9 ml-auto">
-                                <input className="form-control form-control-sm"
-                                       name="answer2"
-                                       type="text"
-                                       onChange={this.handleChange}
-                                       value={this.state.answer2}/>
+                                <div className="input-group">
+                                    <span className="input-group-addon">
+                                        <input type="radio" name="isCorrect"/>
+                                    </span>
+                                    <input className="form-control form-control-sm"
+                                           name="answer2"
+                                           type="text"
+                                           onChange={this.handleChange}
+                                           value={this.state.answer2}/>
+                                </div>
                             </div>
                         </div>
 
                         <div className="form-group row">
                             <div className="col-sm-9 ml-auto">
-                                <input className="form-control form-control-sm"
-                                       name="answer3"
-                                       type="text"
-                                       onChange={this.handleChange}
-                                       value={this.state.answer3}/>
+                                <div className="input-group">
+                                    <span className="input-group-addon">
+                                        <input type="radio" name="isCorrect"/>
+                                    </span>
+                                    <input className="form-control form-control-sm"
+                                           name="answer3"
+                                           type="text"
+                                           onChange={this.handleChange}
+                                           value={this.state.answer3}/>
+                                </div>
                             </div>
                         </div>
 
                         <div className="form-group row">
                             <div className="col-sm-9 ml-auto">
-                                <input className="form-control form-control-sm"
-                                       name="answer4"
-                                       type="text"
-                                       onChange={this.handleChange}
-                                       value={this.state.answer4}/>
+                                <div className="input-group">
+                                    <span className="input-group-addon">
+                                        <input type="radio" name="isCorrect"/>
+                                    </span>
+                                    <input className="form-control form-control-sm"
+                                           name="answer4"
+                                           type="text"
+                                           onChange={this.handleChange}
+                                           value={this.state.answer4}/>
+                                </div>
                             </div>
                         </div>
 
