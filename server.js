@@ -93,7 +93,9 @@ app.post('/questions/add', upload.single('file'), function (req, res) {
 
     if (id) {
         questionPromise = Question.find({
-            id: id,
+            where: {
+                id: id
+            },
             include: [{model: QuestionAnswer, as: 'answers'}, {model: QuestionImage, as: 'image'}]
         });
     } else {
@@ -123,7 +125,13 @@ app.post('/questions/add', upload.single('file'), function (req, res) {
         let newImageName = imageSrc.split('/').splice(-1).pop();
         let oldImage = q && q.image ? q.image.origin : null;
         let promises = [];
-        let questionImage = q.image || QuestionImage.build({});
+        let isNewImage = true;
+
+        if (q.image) {
+            isNewImage = false;
+        }
+
+        let questionImage = isNewImage ? QuestionImage.build({}) : q.image;
 
         if (image) {
             let extension = image.getExtension();
@@ -146,8 +154,10 @@ app.post('/questions/add', upload.single('file'), function (req, res) {
             }
 
             promises.push(image.crop(cropX, cropY, cropW, cropH).quality(60).write(dir + '/' + thumbName));
-            promises.push(q.setImage(questionImage));
+            promises.push(isNewImage ? q.setImage(questionImage) : questionImage.save());
         }
+
+        promises.push(q.save());
 
         return Promise.all(promises);
     }).then(function () {
