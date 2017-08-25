@@ -78,6 +78,7 @@ class CreateForm extends React.Component {
         const data = {};
         const self = this;
 
+        data.id = this.state.id;
         data.question = this.state.question;
         data.cotegory = this.state.cotegory;
         data.answer1 = this.state.answer1;

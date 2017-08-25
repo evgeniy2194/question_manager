@@ -88,7 +88,7 @@ class Search extends React.Component {
                             return <li className="media my-3"
                                        key={item.id}
                                        onDoubleClick={this.handleDoubleClick.bind(this, item)}>
-                                <img className="img-sm d-flex mr-3" src={'/uploads/' + item.image.thumb}/>
+                                <img className="img-sm d-flex mr-3" src={item.image ? '/uploads/' + item.image.thumb : ''}/>
                                 <div className="media-body">
                                     <h6 className="mt-0 mb-1">#{item.id + ' ' + item.question}</h6>
                                     <div className="row">

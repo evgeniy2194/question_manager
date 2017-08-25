@@ -33,8 +33,8 @@ app.get('/', function (req, res) {
 
 app.get('/categories', function (req, res) {
     let categories = [
-        {name: 'category1'},
-        {name: 'category2'}
+        {id: 1, name: 'category1'},
+        {id: 2, name: 'category2'}
     ];
 
     res.send(categories);
@@ -64,7 +64,6 @@ app.get('/search', function (req, res) {
     }).then(response => {
         res.send(response.map(row => row.get({plain: true})));
     }).catch(error => {
-        console.log(error);
         res.send({});
     });
 });
@@ -73,10 +72,10 @@ app.post('/questions/add', upload.single('file'), function (req, res) {
     let body = req.body;
 
     /** Crop settings **/
-    let cropX = body.cropX;
-    let cropY = body.cropY;
-    let cropW = body.cropW;
-    let cropH = body.cropH;
+    let cropX = parseInt(body.cropX);
+    let cropY = parseInt(body.cropY);
+    let cropW = parseInt(body.cropW);
+    let cropH = parseInt(body.cropH);
 
     /** Load and save image **/
     let imageSrc = body.imageSrc;
@@ -88,24 +87,17 @@ app.post('/questions/add', upload.single('file'), function (req, res) {
         fs.mkdirSync(dir);
     }
 
-    let originName = '';
-    let thumbName = '';
+    let id = body.id;
+    let questionPromise = Promise.resolve(null);
+    let imagePromise = Jimp.read(imageSrc);
 
-    Jimp.read(imageSrc).then(function (image) {
-        let extension = image.getExtension();
-
-        originName = seconds + '_origin.' + extension;
-        thumbName = seconds + '_thumb.' + extension;
-
-        let writePromise = image.write(dir + '/' + originName);
-        let cropPromise = image.crop(parseInt(cropX), parseInt(cropY), parseInt(cropW), parseInt(cropH))
-            .quality(60)
-            .write(dir + '/' + thumbName);
-
-        return Promise.all([writePromise, cropPromise]);
-    }).then(function (data) {
-        // Save data to database
-        return Question.create({
+    if (id) {
+        questionPromise = Question.find({
+            id: id,
+            include: [{model: QuestionAnswer, as: 'answers'}, {model: QuestionImage, as: 'image'}]
+        });
+    } else {
+        questionPromise = Question.create({
             question: body.question,
             category: body.category,
             answers: [
@@ -113,23 +105,54 @@ app.post('/questions/add', upload.single('file'), function (req, res) {
                 {answer: body.answer2, isCorrect: false},
                 {answer: body.answer3, isCorrect: false},
                 {answer: body.answer4, isCorrect: false}
-            ],
-            image: {
-                origin: originName,
-                thumb: thumbName,
-                x: cropX,
-                y: cropY,
-                width: cropW,
-                height: cropH
-            }
-        }, {
-            include: [
-                {model: QuestionAnswer, as: 'answers'},
-                {model: QuestionImage, as: 'image'}
             ]
+        }, {
+            include: [{model: QuestionAnswer, as: 'answers'}, {model: QuestionImage, as: 'image'}]
         });
+    }
+
+    Promise.all([questionPromise, imagePromise]).then(function (data) {
+        let q = data[0],
+            image = data[1];
+
+        /**
+         * is has image?
+         * is image change?
+         * is crop position change?
+         */
+        let newImageName = imageSrc.split('/').splice(-1).pop();
+        let oldImage = q && q.image ? q.image.origin : null;
+        let promises = [];
+        let questionImage = q.image || QuestionImage.build({});
+
+        if (image) {
+            let extension = image.getExtension();
+            let originName = seconds + '.' + extension;
+            let thumbName = seconds + '_thumb.' + extension;
+
+            if (newImageName !== oldImage) {
+                questionImage.origin = originName;
+                promises.push(image.write(dir + '/' + originName));
+            } else {
+                questionImage.origin = q.image.origin;
+            }
+
+            if (!q.image || (q.image.x !== cropX || q.image.y !== cropY || q.image.width !== cropW || q.image.height !== cropH )) {
+                questionImage.thumb = thumbName;
+                questionImage.x = cropX;
+                questionImage.y = cropY;
+                questionImage.width = cropW;
+                questionImage.height = cropH;
+            }
+
+            promises.push(image.crop(cropX, cropY, cropW, cropH).quality(60).write(dir + '/' + thumbName));
+            promises.push(q.setImage(questionImage));
+        }
+
+        return Promise.all(promises);
     }).then(function () {
-        res.send({success: true});
+        // res.send({success: true});
+        res.send({success: false});
     }).catch(function (err) {
         console.log(err);
         res.send({success: false});
